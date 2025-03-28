@@ -1,0 +1,41 @@
+name: Deploy to DigitalOcean
+
+on:
+  push:
+    branches:
+      - main  # Change if using another branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H 128.199.17.239 >> ~/.ssh/known_hosts
+
+      - name: Deploy to Droplet
+        run: |
+          ssh -i ~/.ssh/id_rsa artello@128.199.17.239 << 'EOF'
+            cd ~/artello-backend
+            git pull origin main
+            echo "MONGO_URI=${{ secrets.MONGO_URI }}" > .env
+            echo "NEO4J_URI=${{ secrets.NEO4J_URI }}" >> .env
+            echo "NEO4J_USER=${{ secrets.NEO4J_USER }}" >> .env
+            echo "NEO4J_PASSWORD=${{ secrets.NEO4J_PASSWORD }}" >> .env
+            echo "CLERK_SECRET_KEY=${{ secrets.CLERK_SECRET_KEY }}" >> .env
+            echo "CLERK_JWKS_URL=${{ secrets.CLERK_JWKS_URL }}" >> .env
+            echo "RABBITMQ_URL=${{ secrets.RABBITMQ_URL }}" >> .env
+            echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> .env
+            echo "ALLOWED_ORIGINS=${{ secrets.ALLOWED_ORIGINS }}" >> .env
+            source venv/bin/activate
+            pip install -r requirements.txt
+            sudo systemctl restart artello
+            sudo systemctl restart nginx
+          EOF
