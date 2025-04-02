@@ -20,9 +20,18 @@ class AppService:
             app_id=app_id,
             name=app_data.name,
             description=app_data.description,
+            domain=app_data.domain,
+            category=app_data.category,
+            type=app_data.type,
+            environment=app_data.environment,
+            billing_info=app_data.billing_info,
+            tags=app_data.tags,
+            region=app_data.region,
             owner_id=user_id,
             api_key=api_key,
+            status="Active",
             created_at=datetime.now(timezone.utc),
+            created_by=user_id,
         )
 
         # Store App in MongoDB
