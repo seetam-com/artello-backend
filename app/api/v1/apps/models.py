@@ -8,7 +8,7 @@ class AppCreateRequest(BaseModel):
     """
     name: str = Field(..., title="App Name", max_length=100)
     description: Optional[str] = Field(None, title="App Description")
-    domain: HttpUrl = Field(..., title="Primary Domain")
+    domain: str = Field(..., title="Primary Domain")
     category: str = Field(..., title="App Category", max_length=50)
     type: str = Field(..., title="App Type", max_length=50)  # e.g., Web, Mobile, API
     environment: str = Field(..., title="Environment", max_length=50)  # e.g., Development, Production
@@ -23,7 +23,7 @@ class AppModel(BaseModel):
     app_id: str = Field(..., title="App ID")
     name: str = Field(..., title="App Name")
     description: Optional[str] = Field(None, title="App Description")
-    domain: HttpUrl = Field(..., title="Primary Domain")
+    domain: str = Field(..., title="Primary Domain")
     category: str = Field(..., title="App Category")
     type: str = Field(..., title="App Type")
     environment: str = Field(..., title="Environment")
